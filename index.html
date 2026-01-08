@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experimental Fiction Portal</title>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;family=Space+Mono:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        box-sizing: border-box;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      @keyframes glitch {
+        0%,
+        100% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          transform: translate(-2px, -2px);
+        }
+        60% {
+          transform: translate(2px, 2px);
+        }
+        80% {
+          transform: translate(2px, -2px);
+        }
+      }
+
+      @keyframes neon-pulse {
+        0%,
+        100% {
+          opacity: 1;
+          text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+        }
+        50% {
+          opacity: 0.8;
+          text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .glitch-hover:hover {
+        animation: glitch 0.3s infinite;
+      }
+
+      .neon-text {
+        animation: neon-pulse 2s ease-in-out infinite;
+      }
+
+      .float-element {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .grid-pattern {
+        background-image: linear-gradient(
+            rgba(255, 47, 146, 0.1) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(255, 106, 0, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+      }
+
+      .modal-overlay {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .story-content {
+        max-height: 70%;
+        overflow-y: auto;
+      }
+
+      .story-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .story-content::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .story-content::-webkit-scrollbar-thumb {
+        background: #ff2f92;
+        border-radius: 4px;
+      }
+    </style>
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  </head>
+  <body class="h-full">
+    <div id="app" class="w-full h-full overflow-auto"></div>
+    <!-- Modal for reading stories -->
+    <div
+      id="story-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+      "
+    >
+      <div
+        class="modal-overlay"
+        style="
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        "
+      >
+        <div
+          style="
+            max-width: 900px;
+            width: 100%;
+            background: #1a0030;
+            border: 2px solid #ff2f92;
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+          "
+        >
+          <!-- Close button -->
+          <button
+            id="close-modal"
+            style="
+              position: absolute;
+              top: 20px;
+              right: 20px;
+              background: none;
+              border: 2px solid #00e676;
+              color: #00e676;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              cursor: pointer;
+              font-size: 24px;
+              font-weight: bold;
+              transition: all 0.3s;
+            "
+          >
+            ×
+          </button>
+          <!-- Language selector -->
+          <div
+            id="lang-selector"
+            style="
+              display: flex;
+              gap: 12px;
+              margin-bottom: 24px;
+              justify-content: center;
+            "
+          >
+            <button
+              class="lang-btn"
+              data-lang="en"
+              style="
+                padding: 8px 20px;
+                background: none;
+                border: 2px solid #ff2f92;
+                color: #ff2f92;
+                border-radius: 20px;
+                cursor: pointer;
+                font-family: 'Orbitron', sans-serif;
+                font-weight: 700;
+                transition: all 0.3s;
+              "
+            >
+              EN
+            </button>
+            <button
+              class="lang-btn"
+              data-lang="fr"
+              style="
+                padding: 8px 20px;
+                background: none;
+                border: 2px solid #ff2f92;
+                color: #ff2f92;
+                border-radius: 20px;
+                cursor: pointer;
+                font-family: 'Orbitron', sans-serif;
+                font-weight: 700;
+                transition: all 0.3s;
+              "
+            >
+              FR
+            </button>
+            <button
+              class="lang-btn"
+              data-lang="de"
+              style="
+                padding: 8px 20px;
+                background: none;
+                border: 2px solid #ff2f92;
+                color: #ff2f92;
+                border-radius: 20px;
+                cursor: pointer;
+                font-family: 'Orbitron', sans-serif;
+                font-weight: 700;
+                transition: all 0.3s;
+              "
+            >
+              DE
+            </button>
+          </div>
+          <div class="story-content">
+            <h2
+              id="story-title"
+              style="
+                font-family: 'Orbitron', sans-serif;
+                font-weight: 900;
+                font-size: 28px;
+                color: #ff2f92;
+                margin-bottom: 12px;
+                text-shadow: 0 0 20px #ff2f92;
+              "
+            ></h2>
+            <p
+              id="story-author"
+              style="
+                font-family: 'Space Mono', monospace;
+                color: #ffd400;
+                margin-bottom: 32px;
+                font-size: 14px;
+              "
+            ></p>
+            <div
+              id="story-text"
+              style="
+                font-family: 'Space Mono', monospace;
+                line-height: 1.8;
+                color: #ffffff;
+                white-space: pre-wrap;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const defaultConfig = {
+        background_color: "#0a0015",
+        surface_color: "#1a0030",
+        text_color: "#ffffff",
+        primary_action: "#FF2F92",
+        secondary_action: "#FF6A00",
+        accent_color_1: "#FFD400",
+        accent_color_2: "#7CFF00",
+        accent_color_3: "#00E676",
+        font_family: "Orbitron",
+        font_size: 16,
+        main_title: "Experimental Fiction · Weird Fiction · Expanded Writing",
+        subtitle:
+          "There is no beginning, middle, or end here. There are narrative experiences.",
+        intro_text:
+          "My stories do not follow classical structures; they function as manifestos, literary collages, and visionary texts. Rooted in Weird Fiction, surrealism, and New Weird traditions, this writing moves between science fiction, aesthetics, and altered states of perception.",
+        manifesto_paragraph_1: "Fragmented, sensory, and mutable narratives.",
+        manifesto_paragraph_2: "Texts that behave like visual art.",
+        manifesto_paragraph_3:
+          "Stories that are not meant to be read linearly, but entered, crossed, and felt.",
+        manifesto_paragraph_4:
+          "Through experimental fiction, I explore the body, identity, technology, fashion, and the multiverse as symbolic and political spaces. Each piece operates as a portal: a standalone work and, at the same time, part of a larger narrative ecosystem where delirium is not chaos, but a creative method.",
+        closing_statement:
+          "I don't write stories to resolve meaning. I write to open worlds.",
+        work_1_title:
+          "Multiversal Mayhem: The Catwalk Maverick and the Neuron Soup",
+        work_2_title: "Cosmic Couture: A Surreal Symphony in the Multiverse",
+        work_3_title: "Mad Hatter of the Multiverse: A Runway Rebellion",
+        work_4_title:
+          "Chiaroscuro Masquerade: A Carnival of Queer Love and Colorful Reverie",
+      };
+
+      const stories = {
+        1: {
+          en: {
+            title:
+              "Multiversal Mayhem: The Catwalk Maverick and the Neuron Soup",
+            author: "Índigo Lilo Bárcena",
+            text: `In a dimension where primary colors staged a rebellion against the mundane, the multiverse unfurled like an energetic canvas, with the cheeky spirit of a Remedios Varo painting after an overdose of caffeine. Picture a Mary Shelley novel rewriting its plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
+
+Enter a character straight from a psychedelic fashion show, a catwalk rogue with caressing fingers dipped in colors that defy the laws of good taste. This transhumanist fashionista wasn't merely strutting down the runway; they pirouetted through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they executed a bold trypophobia-inducing dance. Envision the creationism of a mad artist, hurling art at the canvas like a cosmic Jackson Pollock.
+
+Yet, this was no ordinary catwalk; it was a metaverse of virtual madness, where animal print clashed with splash art in a fierce avant-garde supremacy battle. The third eye of our fashionista, wide open and winking at the absurdity of it all, perceived the world through Yayoi Kusama-style polka dots, stirring envy even in the most flamboyant fish.
+
+In this irreverent escapade through the multiverse, the octopus of imagination transformed into an interdimensional graffiti artist, leaving a trail of painted lips on the walls of reality. A cosmic rebel, they embraced the chaos of colors, flipping Mary Shelley's novel upside down and transforming the traditional fashion runway into a chaotic circus of creativity.
+
+As this bold transhumanist fashionista continued their chaotic crusade, they left the static conventions of the multiverse gasping for breath. The fashion police of conformity shook their heads, incapable of comprehending the vibrant rebellion of a being that laughed in the face of traditional aesthetics. And so, in the cosmic carnival of creativity, where the absurd and irreverent collided, the fashionista transhumanist became a legend. A living embodiment of chaos and color, they wore the title proudly: "Multiversal Mayhem: The Catwalk Maverick and the Neuron Soup."`,
+          },
+          fr: {
+            title:
+              "Désordre Multiversel : Le Rebelle du Catwalk et la Soupe de Neurones",
+            author: "Alejandra Bárcena",
+            text: `Dans une dimension où les couleurs primaires se révoltaient contre la monotonie, le multivers se déployait comme une toile énergique, avec l'esprit espiègle d'une peinture de Remedios Varo après une surdose de caféine. Imaginez un roman de Mary Shelley réécrivant son intrigue à chaque retournement de page, guidé par un cerveau en montagnes russes de neurones jouant à cache-cache.
+
+Entre en scène un personnage tout droit sorti d'un défilé de mode psychédélique, un rebelle du catwalk avec des doigts caressants trempés dans des couleurs qui défient les lois du bon goût. Ce transhumaniste fashionista ne se contentait pas de défiler; il pirouettait à travers les dimensions, un cyborg dans un ensemble cypunk vibrant qui ferait rougir les écrivains de science-fiction. La peinture corporelle de la créature crépitait d'électricité, envoyant des ondes de choc à travers des racines de textures organiques alors qu'elle exécutait une audacieuse danse induisant la trypophobie. Envisagez le créationnisme d'un artiste fou, lançant de l'art sur la toile comme un Jackson Pollock cosmique.
+
+Pourtant, ce n'était pas un simple catwalk; c'était un metavers de folie virtuelle, où l'imprimé animal se heurtait à l'art éclaboussé dans une féroce bataille de suprématie avant-gardiste. Le troisième œil de notre fashionista, grand ouvert et clignant face à l'absurdité de tout cela, percevait le monde à travers des pois style Yayoi Kusama, suscitant l'envie même chez le poisson le plus flamboyant.
+
+Dans cette escapade irrévérencieuse à travers le multivers, l'octopus de l'imagination se transformait en artiste de graffiti interdimensionnel, laissant une traînée de lèvres peintes sur les murs de la réalité. Un rebelle cosmique, il embrassait le chaos des couleurs, retournant le roman de Mary Shelley et transformant la traditionnelle passerelle de la mode en un cirque chaotique de créativité.
+
+Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaotique, il laissait les conventions figées du multivers à bout de souffle. La police de la mode de la conformité secouait la tête, incapable de comprendre la rébellion vibrante d'un être qui riait au visage de l'esthétique traditionnelle. Et ainsi, dans le carnaval cosmique de la créativité, là où l'absurde et l'irrévérencieux entraient en collision, le fashionista transhumaniste devenait une l����gende. Une incarnation vivante du chaos et de la couleur, il portait fièrement le titre : "Désordre Multiversel : Le Rebelle du Catwalk et la Soupe de Neurones".`,
+          },
+          de: {
+            title:
+              "Multiversales Chaos: Der Catwalk-Rebell und die Neuronensuppe",
+            author: "Alejandra Bárcena",
+            text: `In einer Dimension, in der Primärfarben gegen die Eintönigkeit rebellierten, entfaltete sich das Multiversum wie eine energetische Leinwand, mit dem schelmischen Geist eines Remedios Varo-Gemäldes nach einer Überdosis Koffein. Stell dir vor, ein Mary Shelley-Roman schreibt seine Handlung mit jeder Seite neu, geführt von einem Gehirn auf einer Achterbahnfahrt von Neuronen, die Verstecken spielen.
+
+Betritt eine Figur direkt aus einer psychedelischen Modenschau, ein Catwalk-Rebell mit streichelnden Fingern, getaucht in Farben, die die Gesetze des guten Geschmacks trotzen. Dieser Transhumanist-Fashionista schritt nicht nur über den Catwalk; er wirbelte durch Dimensionen, ein Cyborg in einem lebhaften Cypunk-Ensemble, das Science-Fiction-Autoren erröten lassen würde. Die Körperfarbe der Kreatur knisterte vor Elektrizität, sendete Schockwellen durch Wurzeln organischer Texturen, während sie einen kühnen Tanz aufführten, der Trypophobie auslöste. Stell dir den Sch��pfungsglauben eines verrückten Künstlers vor, der Kunst auf die Leinwand wirft wie ein kosmischer Jackson Pollock.
+
+Doch das war kein gewöhnlicher Catwalk; es war ein Metaversum virtuellen Wahnsinns, in dem Animal Print auf Spritzkunst in einem erbitterten Kampf avantgardistischer Überlegenheit traf. Das dritte Auge unseres Fashionistas, weit geöffnet und zwinkernd an der Absurdität des Ganzen, sah die Welt durch Yayoi Kusama-artige Polka Dots, die selbst den schillerndsten Fisch neidisch machen würden.
+
+In dieser respektlosen Eskapade durch das Multiversum verwandelte sich der Oktopus der Vorstellungskraft in einen interdimensionalen Graffiti-Künstler, der eine Spur von bemalten Lippen an den Wänden der Realität hinterließ. Ein kosmischer Rebell, er umarmte das Chaos der Farben, kehrte Mary Shelleys Roman um und verwandelte den traditionellen Catwalk in einen chaotischen Zirkus der Kreativität.
+
+Während dieser kühnen transhumanen Catwalk-Rebellion ließ die Kreatur die starren Konventionen des Multiversums nach Luft schnappen. Die Modepolizei der Konformität schüttelte den Kopf, unfähig, die vibrierende Rebellion eines Wesens zu begreifen, das der traditionellen Ästhetik ins Gesicht lachte. Und so wurde der Fashionista-Transhumanist mitten im kosmischen Karneval der Kreativität, wo das Absurde und Irreverente aufeinander trafen, zur Legende. Als lebende Verkörperung von Chaos und Farbe trug er den Titel mit Stolz: "Multiversales Chaos: Der Catwalk-Rebell und die Neuronensuppe".`,
+          },
+        },
+        2: {
+          en: {
+            title: "Cosmic Couture: A Surreal Symphony in the Multiverse",
+            author: "Alejandra Bárcena González",
+            text: `In the realm where primary colors danced upon the canvas of reality, there existed a surreal multiverse where Remedios Varo-type dreams collided with the visionary essence of Mary Shelley's imagination. In this enigmatic tapestry of existence, the mind was a vibrant playground of neurons, pulsating with the bipolarity of creation and chaos. 
+
+Amidst the cosmic symphony, a being emerged, their third eye open to the kaleidoscopic wonders of the universe. Caressing fingers painted with the hues of a thousand galaxies, they walked a runway of cosmic energies, a psychedelic cyborg adorned in the avant-garde fashion of cypunk and science fiction.
+
+The creature, a fashionista of transhumanism, adorned themselves with body paint that crackled with electricity, roots of organic textures intertwining with the very essence of creationism. As they moved through the metaverse and virtual reality, their appearance shifted seamlessly, a living embodiment of Yayoi Kusama's style, splashing colors like an ethereal fish swimming through the cosmic sea.
+
+In this surreal tapestry, the octopus of imagination extended its tentacles, exploring the depths of trypophobia and transcending fears with the sheer beauty of painted lips and the mesmerizing allure of animal print. The runway of existence pulsed with the heartbeat of creation, where every step left a trail of vibrant splash, an ode to the cosmic dance of colors.
+
+The fashionista transhumanism entity, with its Yayoi Kusama-inspired presence, gazed upon the vastness of the multiverse, where the fusion of technology and nature became a harmonious symphony. Embracing the essence of Mary Shelley's ingenuity, they contemplated the intricacies of the mind, realizing that within the neurons and the third eye lay the power to transcend boundaries and explore the uncharted territories of existence.
+
+As the creature continued its cosmic journey, it became a living testament to the limitless possibilities of a world where fashion and the surreal converged. In this surreal dance of colors, where science and art intertwined, the fashionista transhumanism entity moved forward, leaving behind a trail of painted lips and a legacy that echoed through the electric roots of the multiverse.
+
+They were not bound by the rules of any single dimension. They existed in all spaces at once—fractured, reformed, endlessly becoming. A symphony of contradiction: organic yet digital, ancient yet futuristic, beautiful yet grotesque. This was not merely fashion; this was transformation as philosophy, as rebellion, as cosmic poetry written across the skin of reality itself.`,
+          },
+        },
+        3: {
+          en: {
+            title: "Mad Hatter of the Multiverse: A Runway Rebellion",
+            author: "Alejandra Bárcena",
+            text: `In a dimension where primary colors rebelled against conformity, a multiverse unfolded with the audacious spirit of a Remedios Varo painting on a caffeine high. Imagine a Mary Shelley novel rewriting its own plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
+
+Enter a character straight out of a psychedelic fashion show, a runway maverick with caressing fingers dipped in colors that defy the laws of taste. This fashionista transhumanist wasn't just walking the runway – they were pirouetting through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they performed a daring trypophobia-inducing dance. Picture the creationism of a mad artist, throwing art at the canvas like a Jackson Pollock of the cosmos.
+
+But this was no ordinary runway – it was a metaverse of virtual insanity, where animal print met splash art in a fierce battle of avant-garde supremacy. The third eye of our fashionista, wide open and winking at the absurdity of it all, saw the world through Yayoi Kusama-style polka dots, making even the most flamboyant fish jealous.
+
+In this irreverent escapade through the multiverse, the octopus of imagination became an interdimensional graffiti artist, leaving behind a trail of painted lips on the walls of reality. A cosmic rebel, they embraced the chaos of colurs, flipping Mary Shelley's novel upside down and turning the traditional fashion runway into a chaotic circus of creativity.
+
+As this audacious transhumanist fashionista continued their chaotic crusade, they left the staid conventions of the multiverse gasping for breath. The fashion police of conformity shook their heads, unable to comprehend the vibrant rebellion of a being that laughed in the face of traditional aesthetics. And so, in the cosmic carnival of creativity, where the absurd and irreverent collided, the fashionista transhumanist became a legend. A living embodiment of chaos and color, they wore the title proudly – "Mad Hatter of the Multiverse: A Runway Rebellion."`,
+          },
+        },
+        4: {
+          en: {
+            title:
+              "Chiaroscuro Masquerade: A Carnival of Queer Love and Colorful Reverie",
+            author: "Alejandra Bárcena",
+            text: `In a dimension where primary colors rebelled against conformity, a multiverse unfolded with the audacious spirit of a Remedios Varo painting on a caffeine high. Imagine a Mary Shelley novel rewriting its own plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
+
+Enter a character straight out of a psychedelic fashion show, a runway maverick with caressing fingers dipped in colors that defy the laws of taste. This fashionista transhumanist wasn't just walking the runway – they were pirouetting through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they performed a daring trypophobia-inducing dance. Picture the creationism of a mad artist, throwing art at the canvas like a Jackson Pollock of the cosmos.
+
+But this was no ordinary runway – it was a metaverse of virtual insanity, where animal print met splash art in a fierce battle of avant-garde supremacy. The third eye of our fashionista, wide open and winking at the absurdity of it all, saw the world through Yayoi Kusama-style polka dots, making even the most flamboyant fish jealous.
+
+In this irreverent escapade through the multiverse, the octopus of imagination became an interdimensional graffiti artist, leaving behind a trail of painted lips on the walls of reality. A cosmic rebel, they embraced the chaos of colurs, flipping Mary Shelley's novel upside down and turning the traditional fashion runway into a chaotic circus of creativity.
+
+As this audacious transhumanist fashionista continued their chaotic crusade, they left the staid conventions of the multiverse gasping for breath. The fashion police of conformity shook their heads, unable to comprehend the vibrant rebellion of a being that laughed in the face of traditional aesthetics. And so, in the cosmic carnival of creativity, where the absurd and irreverent collided, the fashionista transhumanist became a legend. A living embodiment of chaos and color, they wore the title proudly.`,
+          },
+        },
+      };
+
+      let currentStory = null;
+      let currentLang = "en";
+
+      function openStory(storyId) {
+        currentStory = storyId;
+        const story = stories[storyId];
+
+        if (!story) {
+          return;
+        }
+
+        // Show/hide language buttons based on available languages
+        const langButtons = document.querySelectorAll(".lang-btn");
+        langButtons.forEach((btn) => {
+          const lang = btn.getAttribute("data-lang");
+          if (story[lang]) {
+            btn.style.display = "block";
+          } else {
+            btn.style.display = "none";
+          }
+        });
+
+        // Default to English if available
+        currentLang = story["en"] ? "en" : Object.keys(story)[0];
+
+        displayStory(storyId, currentLang);
+        document.getElementById("story-modal").style.display = "block";
+      }
+
+      function displayStory(storyId, lang) {
+        const story = stories[storyId][lang];
+        if (!story) return;
+
+        document.getElementById("story-title").textContent = story.title;
+        document.getElementById(
+          "story-author"
+        ).textContent = `by ${story.author}`;
+        document.getElementById("story-text").textContent = story.text;
+
+        // Update active language button
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          if (btn.getAttribute("data-lang") === lang) {
+            btn.style.background = "#FF2F92";
+            btn.style.color = "#000";
+          } else {
+            btn.style.background = "none";
+            btn.style.color = "#FF2F92";
+          }
+        });
+      }
+
+      function closeModal() {
+        document.getElementById("story-modal").style.display = "none";
+      }
+
+      // Event listeners
+      document
+        .getElementById("close-modal")
+        .addEventListener("click", closeModal);
+
+      document.getElementById("story-modal").addEventListener("click", (e) => {
+        if (e.target.id === "story-modal") {
+          closeModal();
+        }
+      });
+
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const lang = btn.getAttribute("data-lang");
+          currentLang = lang;
+          displayStory(currentStory, lang);
+        });
+      });
+
+      function createElements() {
+        const app = document.getElementById("app");
+        app.innerHTML = `
+        <div class="grid-pattern" style="min-height: 100%; padding: 40px 20px;">
+          <div style="max-width: 1200px; margin: 0 auto;">
+            <!-- Header -->
+            <header class="text-center mb-16 float-element">
+              <h1 id="main-title" class="neon-text mb-6" style="font-weight: 900; line-height: 1.2; color: #FF2F92;">
+                ${defaultConfig.main_title}
+              </h1>
+              <p id="subtitle" class="neon-text" style="font-weight: 400; line-height: 1.6; max-width: 800px; margin: 0 auto; color: #7CFF00;">
+                ${defaultConfig.subtitle}
+              </p>
+            </header>
+
+            <!-- Intro Section -->
+            <section class="mb-16" style="max-width: 900px; margin: 0 auto;">
+              <div style="padding: 40px; border: 2px solid; border-radius: 8px; backdrop-filter: blur(10px);">
+                <p id="intro-text" style="line-height: 1.8; margin-bottom: 24px; color: #FF6A00;">
+                  ${defaultConfig.intro_text}
+                </p>
+                
+                <div style="margin: 32px 0; padding-left: 24px; border-left: 4px solid;">
+                  <p id="manifesto-1" style="margin-bottom: 16px; font-weight: 700; color: #FF6A00;">
+                    ${defaultConfig.manifesto_paragraph_1}
+                  </p>
+                  <p id="manifesto-2" style="margin-bottom: 16px; font-weight: 700; color: #FF6A00;">
+                    ${defaultConfig.manifesto_paragraph_2}
+                  </p>
+                  <p id="manifesto-3" style="margin-bottom: 0; font-weight: 700; color: #FF6A00;">
+                    ${defaultConfig.manifesto_paragraph_3}
+                  </p>
+                </div>
+
+                <p id="manifesto-4" style="line-height: 1.8; margin-bottom: 24px; color: #FF6A00;">
+                  ${defaultConfig.manifesto_paragraph_4}
+                </p>
+
+                <p id="closing-statement" style="font-weight: 700; line-height: 1.8; color: #FF6A00;">
+                  ${defaultConfig.closing_statement}
+                </p>
+              </div>
+            </section>
+
+            <!-- Works Grid -->
+            <section>
+              <h2 class="text-center mb-12" style="font-weight: 900;">
+                <span class="neon-text" style="color: #FF2F92;">Portal</span> <span class="neon-text" style="color: #00E676;">Narratives</span>
+              </h2>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                <div class="work-card glitch-hover" onclick="openStory(1)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                  <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
+                    01
+                  </div>
+                  <h3 id="work-1" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #FF2F92;">
+                    ${defaultConfig.work_1_title}
+                  </h3>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN · FR · DE</p>
+                </div>
+
+                <div class="work-card glitch-hover" onclick="openStory(2)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                  <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
+                    02
+                  </div>
+                  <h3 id="work-2" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #FF6A00;">
+                    ${defaultConfig.work_2_title}
+                  </h3>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                </div>
+
+                <div class="work-card glitch-hover" onclick="openStory(3)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                  <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
+                    03
+                  </div>
+                  <h3 id="work-3" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #FFD400;">
+                    ${defaultConfig.work_3_title}
+                  </h3>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                </div>
+
+                <div class="work-card glitch-hover" onclick="openStory(4)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                  <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
+                    04
+                  </div>
+                  <h3 id="work-4" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #7CFF00;">
+                    ${defaultConfig.work_4_title}
+                  </h3>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center mt-20" style="opacity: 0.6;">
+              <p style="font-family: 'Space Mono', monospace;">
+                ∞ Enter the multiverse ∞
+              </p>
+            </footer>
+          </div>
+        </div>
+      `;
+      }
+
+      async function onConfigChange(config) {
+        const customFont = config.font_family || defaultConfig.font_family;
+        const baseFontStack = "'Space Mono', monospace";
+        const baseSize = config.font_size || defaultConfig.font_size;
+
+        const app = document.getElementById("app");
+        const gridPattern = app.firstElementChild;
+
+        // Apply colors
+        gridPattern.style.background =
+          config.background_color || defaultConfig.background_color;
+
+        const introBorder = gridPattern.querySelector("section > div");
+        introBorder.style.borderColor =
+          config.secondary_action || defaultConfig.secondary_action;
+        introBorder.style.backgroundColor = `${
+          config.surface_color || defaultConfig.surface_color
+        }cc`;
+
+        const manifestoBorder = introBorder.querySelector(
+          'div[style*="border-left"]'
+        );
+        manifestoBorder.style.borderLeftColor =
+          config.accent_color_3 || defaultConfig.accent_color_3;
+
+        // Apply colors to work cards
+        const workCards = gridPattern.querySelectorAll(".work-card");
+        const cardColors = [
+          config.primary_action || defaultConfig.primary_action,
+          config.secondary_action || defaultConfig.secondary_action,
+          config.accent_color_1 || defaultConfig.accent_color_1,
+          config.accent_color_2 || defaultConfig.accent_color_2,
+        ];
+
+        workCards.forEach((card, index) => {
+          const color = cardColors[index % cardColors.length];
+          card.style.borderColor = color;
+          card.style.backgroundColor = `${
+            config.surface_color || defaultConfig.surface_color
+          }80`;
+
+          const circle = card.querySelector('div[style*="border-radius: 50%"]');
+          circle.style.backgroundColor = color;
+          circle.style.color =
+            config.background_color || defaultConfig.background_color;
+        });
+
+        // Apply text color
+        document.body.style.color =
+          config.text_color || defaultConfig.text_color;
+
+        // Apply fonts
+        document.getElementById(
+          "main-title"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("main-title").style.color = "#FF2F92";
+        document.getElementById(
+          "subtitle"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("subtitle").style.color = "#7CFF00";
+        document.getElementById(
+          "intro-text"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "manifesto-1"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "manifesto-2"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "manifesto-3"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "manifesto-4"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "closing-statement"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById(
+          "work-1"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("work-1").style.color = "#FF2F92";
+        document.getElementById(
+          "work-2"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("work-2").style.color = "#FF6A00";
+        document.getElementById(
+          "work-3"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("work-3").style.color = "#FFD400";
+        document.getElementById(
+          "work-4"
+        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.getElementById("work-4").style.color = "#7CFF00";
+
+        // Apply font sizes
+        document.getElementById("main-title").style.fontSize = `${
+          baseSize * 2.5
+        }px`;
+        document.getElementById("subtitle").style.fontSize = `${
+          baseSize * 1.25
+        }px`;
+        document.getElementById("intro-text").style.fontSize = `${baseSize}px`;
+        document.getElementById("manifesto-1").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("manifesto-2").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("manifesto-3").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("manifesto-4").style.fontSize = `${baseSize}px`;
+        document.getElementById("closing-statement").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+
+        const h2 = gridPattern.querySelector("h2");
+        h2.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        h2.style.fontSize = `${baseSize * 2}px`;
+
+        document.getElementById("work-1").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("work-2").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("work-3").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+        document.getElementById("work-4").style.fontSize = `${
+          baseSize * 1.1
+        }px`;
+
+        // Update text content
+        document.getElementById("main-title").textContent =
+          config.main_title || defaultConfig.main_title;
+        document.getElementById("subtitle").textContent =
+          config.subtitle || defaultConfig.subtitle;
+        document.getElementById("intro-text").textContent =
+          config.intro_text || defaultConfig.intro_text;
+        document.getElementById("manifesto-1").textContent =
+          config.manifesto_paragraph_1 || defaultConfig.manifesto_paragraph_1;
+        document.getElementById("manifesto-2").textContent =
+          config.manifesto_paragraph_2 || defaultConfig.manifesto_paragraph_2;
+        document.getElementById("manifesto-3").textContent =
+          config.manifesto_paragraph_3 || defaultConfig.manifesto_paragraph_3;
+        document.getElementById("manifesto-4").textContent =
+          config.manifesto_paragraph_4 || defaultConfig.manifesto_paragraph_4;
+        document.getElementById("closing-statement").textContent =
+          config.closing_statement || defaultConfig.closing_statement;
+        document.getElementById("work-1").textContent =
+          config.work_1_title || defaultConfig.work_1_title;
+        document.getElementById("work-2").textContent =
+          config.work_2_title || defaultConfig.work_2_title;
+        document.getElementById("work-3").textContent =
+          config.work_3_title || defaultConfig.work_3_title;
+        document.getElementById("work-4").textContent =
+          config.work_4_title || defaultConfig.work_4_title;
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () =>
+                  config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                },
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                },
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                },
+              },
+              {
+                get: () =>
+                  config.primary_action || defaultConfig.primary_action,
+                set: (value) => {
+                  config.primary_action = value;
+                  window.elementSdk.setConfig({ primary_action: value });
+                },
+              },
+              {
+                get: () =>
+                  config.secondary_action || defaultConfig.secondary_action,
+                set: (value) => {
+                  config.secondary_action = value;
+                  window.elementSdk.setConfig({ secondary_action: value });
+                },
+              },
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              },
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              },
+            },
+          }),
+          mapToEditPanelValues: (config) =>
+            new Map([
+              ["main_title", config.main_title || defaultConfig.main_title],
+              ["subtitle", config.subtitle || defaultConfig.subtitle],
+              ["intro_text", config.intro_text || defaultConfig.intro_text],
+              [
+                "manifesto_paragraph_1",
+                config.manifesto_paragraph_1 ||
+                  defaultConfig.manifesto_paragraph_1,
+              ],
+              [
+                "manifesto_paragraph_2",
+                config.manifesto_paragraph_2 ||
+                  defaultConfig.manifesto_paragraph_2,
+              ],
+              [
+                "manifesto_paragraph_3",
+                config.manifesto_paragraph_3 ||
+                  defaultConfig.manifesto_paragraph_3,
+              ],
+              [
+                "manifesto_paragraph_4",
+                config.manifesto_paragraph_4 ||
+                  defaultConfig.manifesto_paragraph_4,
+              ],
+              [
+                "closing_statement",
+                config.closing_statement || defaultConfig.closing_statement,
+              ],
+              [
+                "work_1_title",
+                config.work_1_title || defaultConfig.work_1_title,
+              ],
+              [
+                "work_2_title",
+                config.work_2_title || defaultConfig.work_2_title,
+              ],
+              [
+                "work_3_title",
+                config.work_3_title || defaultConfig.work_3_title,
+              ],
+              [
+                "work_4_title",
+                config.work_4_title || defaultConfig.work_4_title,
+              ],
+            ]),
+        });
+      }
+
+      createElements();
+      onConfigChange(window.elementSdk?.config || defaultConfig);
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9ba80df02356eef2',t:'MTc2NzgzNzEzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
