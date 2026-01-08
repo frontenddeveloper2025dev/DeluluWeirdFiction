@@ -73,6 +73,24 @@
         }
       }
 
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(100%);
+        }
+      }
+
       .glitch-hover:hover {
         animation: glitch 0.3s infinite;
       }
@@ -115,6 +133,154 @@
         background: #ff2f92;
         border-radius: 4px;
       }
+
+      .menu-slide-in {
+        animation: slideInRight 0.3s ease-out forwards;
+      }
+
+      .menu-slide-out {
+        animation: slideOutRight 0.3s ease-out forwards;
+      }
+
+      .hamburger {
+        width: 30px;
+        height: 24px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .hamburger span {
+        width: 100%;
+        height: 3px;
+        background: #ff2f92;
+        transition: all 0.3s;
+        border-radius: 2px;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(8px, -8px);
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        cursor: pointer;
+        aspect-ratio: 1;
+        transition: transform 0.3s;
+      }
+
+      .gallery-item:hover {
+        transform: scale(1.05);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+
+      .gallery-item:hover img {
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
+        .grid-pattern {
+          background-size: 30px 30px !important;
+        }
+
+        #main-title {
+          font-size: 24px !important;
+        }
+
+        #subtitle {
+          font-size: 16px !important;
+        }
+
+        .work-card {
+          padding: 20px !important;
+        }
+
+        #story-modal > div > div {
+          padding: 20px !important;
+          margin: 10px !important;
+        }
+
+        #story-title {
+          font-size: 20px !important;
+        }
+
+        .lang-btn {
+          padding: 6px 16px !important;
+          font-size: 14px !important;
+        }
+
+        .gallery-grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #main-title {
+          font-size: 20px !important;
+        }
+
+        #subtitle {
+          font-size: 14px !important;
+        }
+
+        .work-card h3 {
+          font-size: 16px !important;
+        }
+
+        #story-title {
+          font-size: 18px !important;
+        }
+
+        #story-text {
+          font-size: 14px !important;
+        }
+      }
+
+      .nav-link {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #ff2f92;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+      }
+
+      .nav-link:hover::after {
+        transform: translateX(0);
+      }
     </style>
     <style>
       @view-transition {
@@ -124,7 +290,182 @@
     <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   </head>
   <body class="h-full">
-    <div id="app" class="w-full h-full overflow-auto"></div>
+    <!-- Navigation Menu -->
+    <nav
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        padding: 20px;
+        background: rgba(10, 0, 21, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid #ff2f92;
+      "
+    >
+      <div
+        style="
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <div
+          style="
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            color: #ff2f92;
+          "
+        >
+          WF
+        </div>
+        <!-- Desktop Menu -->
+        <div
+          id="desktop-menu"
+          style="display: flex; gap: 32px; align-items: center"
+        >
+          <a
+            href="#home"
+            class="nav-link"
+            style="
+              font-family: 'Orbitron', sans-serif;
+              color: #ffffff;
+              text-decoration: none;
+              font-weight: 700;
+              transition: color 0.3s;
+            "
+            >Home</a
+          >
+          <a
+            href="#stories"
+            class="nav-link"
+            style="
+              font-family: 'Orbitron', sans-serif;
+              color: #ffffff;
+              text-decoration: none;
+              font-weight: 700;
+              transition: color 0.3s;
+            "
+            id="nav-stories"
+            >Stories</a
+          >
+          <a
+            href="#gallery"
+            class="nav-link"
+            style="
+              font-family: 'Orbitron', sans-serif;
+              color: #ffffff;
+              text-decoration: none;
+              font-weight: 700;
+              transition: color 0.3s;
+            "
+            id="nav-gallery"
+            >Gallery</a
+          >
+          <a
+            href="#about"
+            class="nav-link"
+            style="
+              font-family: 'Orbitron', sans-serif;
+              color: #ffffff;
+              text-decoration: none;
+              font-weight: 700;
+              transition: color 0.3s;
+            "
+            id="nav-about"
+            >About</a
+          >
+        </div>
+        <!-- Mobile Hamburger -->
+        <div id="hamburger" class="hamburger" style="display: none">
+          <span></span> <span></span> <span></span>
+        </div>
+      </div>
+    </nav>
+    <!-- Mobile Menu Overlay -->
+    <div
+      id="mobile-menu"
+      style="
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 70%;
+        height: 100%;
+        background: rgba(26, 0, 48, 0.98);
+        backdrop-filter: blur(20px);
+        z-index: 998;
+        transform: translateX(100%);
+        border-left: 2px solid #ff2f92;
+        padding: 100px 30px;
+      "
+    >
+      <div style="display: flex; flex-direction: column; gap: 32px">
+        <a
+          href="#home"
+          class="mobile-nav-link"
+          style="
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 24px;
+            transition: color 0.3s;
+          "
+          >Home</a
+        >
+        <a
+          href="#stories"
+          class="mobile-nav-link"
+          style="
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 24px;
+            transition: color 0.3s;
+          "
+          id="mobile-nav-stories"
+          >Stories</a
+        >
+        <a
+          href="#gallery"
+          class="mobile-nav-link"
+          style="
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 24px;
+            transition: color 0.3s;
+          "
+          id="mobile-nav-gallery"
+          >Gallery</a
+        >
+        <a
+          href="#about"
+          class="mobile-nav-link"
+          style="
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 24px;
+            transition: color 0.3s;
+          "
+          id="mobile-nav-about"
+          >About</a
+        >
+      </div>
+    </div>
+    <div
+      id="app"
+      class="w-full h-full overflow-auto"
+      style="padding-top: 80px"
+    ></div>
     <!-- Modal for reading stories -->
     <div
       id="story-modal"
@@ -157,7 +498,7 @@
             background: #1a0030;
             border: 2px solid #ff2f92;
             border-radius: 12px;
-            padding: 40px;
+            padding: 20px;
             position: relative;
             max-height: 90%;
             display: flex;
@@ -268,6 +609,23 @@
                 font-size: 14px;
               "
             ></p>
+            <div id="story-image" style="margin-bottom: 32px; display: none">
+              <img
+                id="story-img"
+                src=""
+                alt="Story illustration"
+                style="
+                  width: 100%;
+                  max-width: 600px;
+                  height: auto;
+                  border-radius: 8px;
+                  border: 2px solid #ff2f92;
+                  display: block;
+                  margin: 0 auto;
+                "
+                onerror="this.parentElement.style.display='none';"
+              />
+            </div>
             <div
               id="story-text"
               style="
@@ -279,6 +637,66 @@
             ></div>
           </div>
         </div>
+      </div>
+    </div>
+    <!-- Gallery Modal -->
+    <div
+      id="gallery-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+      "
+    >
+      <div
+        class="modal-overlay"
+        style="
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        "
+      >
+        <button
+          id="close-gallery-modal"
+          style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 2px solid #00e676;
+            color: #00e676;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 32px;
+            font-weight: bold;
+            transition: all 0.3s;
+            z-index: 1001;
+          "
+        >
+          ×
+        </button>
+        <img
+          id="gallery-modal-img"
+          src=""
+          alt="Gallery image"
+          style="
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border: 3px solid #ff2f92;
+            border-radius: 12px;
+          "
+        />
       </div>
     </div>
     <script>
@@ -312,7 +730,24 @@
         work_3_title: "Mad Hatter of the Multiverse: A Runway Rebellion",
         work_4_title:
           "Chiaroscuro Masquerade: A Carnival of Queer Love and Colorful Reverie",
+        menu_stories: "Stories",
+        menu_gallery: "Gallery",
+        menu_about: "About",
+        gallery_title: "Visual Inspirations",
+        gallery_subtitle: "A collection of surreal and experimental imagery",
       };
+
+      const galleryImages = [
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(17).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(16).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(4).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(9).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(8).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(5).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(3).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(14).jpg",
+        "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/galeria%20(13).jpg",
+      ];
 
       const stories = {
         1: {
@@ -320,6 +755,8 @@
             title:
               "Multiversal Mayhem: The Catwalk Maverick and the Neuron Soup",
             author: "Índigo Lilo Bárcena",
+            image:
+              "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/Multiversal%20Mayhem.jpg",
             text: `In a dimension where primary colors staged a rebellion against the mundane, the multiverse unfurled like an energetic canvas, with the cheeky spirit of a Remedios Varo painting after an overdose of caffeine. Picture a Mary Shelley novel rewriting its plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
 
 Enter a character straight from a psychedelic fashion show, a catwalk rogue with caressing fingers dipped in colors that defy the laws of good taste. This transhumanist fashionista wasn't merely strutting down the runway; they pirouetted through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they executed a bold trypophobia-inducing dance. Envision the creationism of a mad artist, hurling art at the canvas like a cosmic Jackson Pollock.
@@ -340,9 +777,9 @@ Entre en scène un personnage tout droit sorti d'un défilé de mode psychédél
 
 Pourtant, ce n'était pas un simple catwalk; c'était un metavers de folie virtuelle, où l'imprimé animal se heurtait à l'art éclaboussé dans une féroce bataille de suprématie avant-gardiste. Le troisième œil de notre fashionista, grand ouvert et clignant face à l'absurdité de tout cela, percevait le monde à travers des pois style Yayoi Kusama, suscitant l'envie même chez le poisson le plus flamboyant.
 
-Dans cette escapade irrévérencieuse à travers le multivers, l'octopus de l'imagination se transformait en artiste de graffiti interdimensionnel, laissant une traînée de lèvres peintes sur les murs de la réalité. Un rebelle cosmique, il embrassait le chaos des couleurs, retournant le roman de Mary Shelley et transformant la traditionnelle passerelle de la mode en un cirque chaotique de créativité.
+Dans cette escapade irrévérencieuse à travers le multivers, l'octopus de l'imagination se transformait en artiste de graffiti interdimensionnel, laissant une traîn��e de l��vres peintes sur les murs de la réalité. Un rebelle cosmique, il embrassait le chaos des couleurs, retournant le roman de Mary Shelley et transformant la traditionnelle passerelle de la mode en un cirque chaotique de créativité.
 
-Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaotique, il laissait les conventions figées du multivers à bout de souffle. La police de la mode de la conformité secouait la tête, incapable de comprendre la rébellion vibrante d'un être qui riait au visage de l'esthétique traditionnelle. Et ainsi, dans le carnaval cosmique de la créativité, là où l'absurde et l'irrévérencieux entraient en collision, le fashionista transhumaniste devenait une l����gende. Une incarnation vivante du chaos et de la couleur, il portait fièrement le titre : "Désordre Multiversel : Le Rebelle du Catwalk et la Soupe de Neurones".`,
+Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaotique, il laissait les conventions fig����es du multivers à bout de souffle. La police de la mode de la conformité secouait la tête, incapable de comprendre la rébellion vibrante d'un être qui riait au visage de l'esthétique traditionnelle. Et ainsi, dans le carnaval cosmique de la créativité, là où l'absurde et l'irrévérencieux entraient en collision, le fashionista transhumaniste devenait une légende. Une incarnation vivante du chaos et de la couleur, il portait fièrement le titre : "Désordre Multiversel : Le Rebelle du Catwalk et la Soupe de Neurones".`,
           },
           de: {
             title:
@@ -350,7 +787,7 @@ Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaoti
             author: "Alejandra Bárcena",
             text: `In einer Dimension, in der Primärfarben gegen die Eintönigkeit rebellierten, entfaltete sich das Multiversum wie eine energetische Leinwand, mit dem schelmischen Geist eines Remedios Varo-Gemäldes nach einer Überdosis Koffein. Stell dir vor, ein Mary Shelley-Roman schreibt seine Handlung mit jeder Seite neu, geführt von einem Gehirn auf einer Achterbahnfahrt von Neuronen, die Verstecken spielen.
 
-Betritt eine Figur direkt aus einer psychedelischen Modenschau, ein Catwalk-Rebell mit streichelnden Fingern, getaucht in Farben, die die Gesetze des guten Geschmacks trotzen. Dieser Transhumanist-Fashionista schritt nicht nur über den Catwalk; er wirbelte durch Dimensionen, ein Cyborg in einem lebhaften Cypunk-Ensemble, das Science-Fiction-Autoren erröten lassen würde. Die Körperfarbe der Kreatur knisterte vor Elektrizität, sendete Schockwellen durch Wurzeln organischer Texturen, während sie einen kühnen Tanz aufführten, der Trypophobie auslöste. Stell dir den Sch��pfungsglauben eines verrückten Künstlers vor, der Kunst auf die Leinwand wirft wie ein kosmischer Jackson Pollock.
+Betritt eine Figur direkt aus einer psychedelischen Modenschau, ein Catwalk-Rebell mit streichelnden Fingern, getaucht in Farben, die die Gesetze des guten Geschmacks trotzen. Dieser Transhumanist-Fashionista schritt nicht nur über den Catwalk; er wirbelte durch Dimensionen, ein Cyborg in einem lebhaften Cypunk-Ensemble, das Science-Fiction-Autoren erröten lassen würde. Die Körperfarbe der Kreatur knisterte vor Elektrizität, sendete Schockwellen durch Wurzeln organischer Texturen, während sie einen kühnen Tanz aufführten, der Trypophobie auslöste. Stell dir den Schöpfungsglauben eines verrückten Künstlers vor, der Kunst auf die Leinwand wirft wie ein kosmischer Jackson Pollock.
 
 Doch das war kein gewöhnlicher Catwalk; es war ein Metaversum virtuellen Wahnsinns, in dem Animal Print auf Spritzkunst in einem erbitterten Kampf avantgardistischer Überlegenheit traf. Das dritte Auge unseres Fashionistas, weit geöffnet und zwinkernd an der Absurdität des Ganzen, sah die Welt durch Yayoi Kusama-artige Polka Dots, die selbst den schillerndsten Fisch neidisch machen würden.
 
@@ -362,7 +799,9 @@ Während dieser kühnen transhumanen Catwalk-Rebellion ließ die Kreatur die sta
         2: {
           en: {
             title: "Cosmic Couture: A Surreal Symphony in the Multiverse",
-            author: "Alejandra Bárcena González",
+            author: "Índigo Lilo Bárcena",
+            image:
+              "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/Cosmic%20Couture.jpg",
             text: `In the realm where primary colors danced upon the canvas of reality, there existed a surreal multiverse where Remedios Varo-type dreams collided with the visionary essence of Mary Shelley's imagination. In this enigmatic tapestry of existence, the mind was a vibrant playground of neurons, pulsating with the bipolarity of creation and chaos. 
 
 Amidst the cosmic symphony, a being emerged, their third eye open to the kaleidoscopic wonders of the universe. Caressing fingers painted with the hues of a thousand galaxies, they walked a runway of cosmic energies, a psychedelic cyborg adorned in the avant-garde fashion of cypunk and science fiction.
@@ -377,11 +816,49 @@ As the creature continued its cosmic journey, it became a living testament to th
 
 They were not bound by the rules of any single dimension. They existed in all spaces at once—fractured, reformed, endlessly becoming. A symphony of contradiction: organic yet digital, ancient yet futuristic, beautiful yet grotesque. This was not merely fashion; this was transformation as philosophy, as rebellion, as cosmic poetry written across the skin of reality itself.`,
           },
+          fr: {
+            title:
+              "Couture Cosmique : Une Symphonie Surréaliste dans le Multivers",
+            author: "Índigo Lilo Bárcena",
+            text: `Dans le royaume où les couleurs primaires dansaient sur la toile de la réalité, il existait un multivers surréaliste où les rêves à la Remedios Varo entraient en collision avec l'essence visionnaire de l'imagination de Mary Shelley. Dans cette tapisserie énigmatique de l'existence, l'esprit était un terrain de jeu vibrant de neurones, pulsant avec la bipolarité de la création et du chaos.
+
+Au milieu de la symphonie cosmique, un être émergea, son troisième œil ouvert aux merveilles kaléidoscopiques de l'univers. Des doigts caressants peints avec les teintes de mille galaxies, ils marchaient sur un podium d'énergies cosmiques, un cyborg psychédélique paré de la mode avant-gardiste du cypunk et de la science-fiction.
+
+La créature, fashionista du transhumanisme, se parait de peinture corporelle qui crépitait d'électricité, des racines de textures organiques s'entrelaçant avec l'essence même du créationnisme. Alors qu'ils se déplaçaient à travers le métavers et la réalité virtuelle, leur apparence changeait sans effort, incarnation vivante du style de Yayoi Kusama, ��claboussant des couleurs comme un poisson éthéré nageant dans la mer cosmique.
+
+Dans cette tapisserie surréaliste, le poulpe de l'imagination étendait ses tentacules, explorant les profondeurs de la trypophobie et transcendant les peurs avec la pure beauté des lèvres peintes et l'attrait hypnotisant de l'imprimé animal. Le podium de l'existence pulsait au rythme de la création, où chaque pas laissait une traînée d'éclaboussures vibrantes, une ode à la danse cosmique des couleurs.
+
+L'entité fashionista du transhumanisme, avec sa présence inspirée de Yayoi Kusama, contemplait l'immensité du multivers, où la fusion de la technologie et de la nature devenait une symphonie harmonieuse. Embrassant l'essence de l'ingéniosité de Mary Shelley, ils contemplaient les subtilités de l'esprit, réalisant qu'au sein des neurones et du troisième œil résidait le pouvoir de transcender les frontières et d'explorer les territoires inexplorés de l'existence.
+
+Alors que la créature poursuivait son voyage cosmique, elle devint un témoignage vivant des possibilités illimitées d'un monde où la mode et le surréel convergeaient. Dans cette danse surréaliste de couleurs, où la science et l'art s'entremêlaient, l'entité fashionista du transhumanisme avançait, laissant derrière elle une traînée de lèvres peintes et un héritage qui résonnait à travers les racines électriques du multivers.
+
+Ils n'étaient pas liés par les règles d'une seule dimension. Ils existaient dans tous les espaces à la fois - fracturés, reformés, devenant sans cesse. Une symphonie de contradiction : organique mais numérique, ancien mais futuriste, beau mais grotesque. Ce n'était pas simplement de la mode ; c'était la transformation comme philosophie, comme rébellion, comme poésie cosmique écrite sur la peau de la réalité elle-même.`,
+          },
+          de: {
+            title:
+              "Kosmische Couture: Eine Surrealistische Symphonie im Multiversum",
+            author: "Índigo Lilo Bárcena",
+            text: `Im Reich, wo Primärfarben auf der Leinwand der Realität tanzten, existierte ein surreales Multiversum, wo Remedios Varo-artige Träume mit dem visionären Wesen von Mary Shelleys Vorstellungskraft kollidierten. In diesem rätselhaften Wandteppich der Existenz war der Geist ein lebendiger Spielplatz von Neuronen, pulsierend mit der Bipolarität von Schöpfung und Chaos.
+
+Inmitten der kosmischen Symphonie erschien ein Wesen, dessen drittes Auge offen war für die kaleidoskopischen Wunder des Universums. Streichelnde Finger, bemalt mit den Farbtönen von tausend Galaxien, gingen sie einen Laufsteg kosmischer Energien entlang, ein psychedelischer Cyborg, geschmückt in der avantgardistischen Mode von Cypunk und Science-Fiction.
+
+Die Kreatur, ein Fashionista des Transhumanismus, schmückte sich mit Körperfarbe, die vor Elektrizität knisterte, Wurzeln organischer Texturen, die sich mit dem Wesen des Kreationismus selbst verflochen. Während sie sich durch das Metaversum und die virtuelle Realität bewegten, veränderte sich ihr Aussehen nahtlos, eine lebendige Verkörperung von Yayoi Kusamas Stil, Farben spritzend wie ein ätherischer Fisch, der durch das kosmische Meer schwimmt.
+
+In diesem surrealen Wandteppich streckte der Oktopus der Vorstellungskraft seine Tentakel aus, erforschte die Tiefen der Trypophobie und transzendierte Ängste mit der reinen Schönheit bemalter Lippen und dem hypnotisierenden Reiz von Animal Print. Der Laufsteg der Existenz pulsierte mit dem Herzschlag der Schöpfung, wo jeder Schritt eine Spur lebendiger Spritzer hinterließ, eine Ode an den kosmischen Tanz der Farben.
+
+Die Fashionista-Transhumanismus-Entität, mit ihrer von Yayoi Kusama inspirierten Präsenz, blickte auf die Weite des Multiversums, wo die Fusion von Technologie und Natur zu einer harmonischen Symphonie wurde. Das Wesen von Mary Shelleys Genialität umarmend, betrachteten sie die Feinheiten des Geistes und erkannten, dass in den Neuronen und dem dritten Auge die Kraft lag, Grenzen zu überschreiten und die unerforschten Territorien der Existenz zu erkunden.
+
+Als die Kreatur ihre kosmische Reise fortsetzte, wurde sie zu einem lebendigen Zeugnis der grenzenlosen Möglichkeiten einer Welt, in der Mode und das Surreale konvergierten. In diesem surrealen Tanz der Farben, wo Wissenschaft und Kunst sich verflochen, bewegte sich die Fashionista-Transhumanismus-Entität vorwärts und hinterließ eine Spur bemalter Lippen und ein Vermächtnis, das durch die elektrischen Wurzeln des Multiversums widerhallte.
+
+Sie waren nicht an die Regeln einer einzigen Dimension gebunden. Sie existierten in allen Räumen gleichzeitig - zerbrochen, reformiert, endlos werdend. Eine Symphonie des Widerspruchs: organisch, aber digital, alt, aber futuristisch, schön, aber grotesk. Dies war nicht nur Mode; dies war Transformation als Philosophie, als Rebellion, als kosmische Poesie, geschrieben auf die Haut der Realität selbst.`,
+          },
         },
         3: {
           en: {
             title: "Mad Hatter of the Multiverse: A Runway Rebellion",
-            author: "Alejandra Bárcena",
+            author: "Índigo Lilo Bárcena",
+            image:
+              "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/Mad-Hatter-of-the-Multiverse-a-Runway.jpg",
             text: `In a dimension where primary colors rebelled against conformity, a multiverse unfolded with the audacious spirit of a Remedios Varo painting on a caffeine high. Imagine a Mary Shelley novel rewriting its own plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
 
 Enter a character straight out of a psychedelic fashion show, a runway maverick with caressing fingers dipped in colors that defy the laws of taste. This fashionista transhumanist wasn't just walking the runway – they were pirouetting through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they performed a daring trypophobia-inducing dance. Picture the creationism of a mad artist, throwing art at the canvas like a Jackson Pollock of the cosmos.
@@ -392,12 +869,42 @@ In this irreverent escapade through the multiverse, the octopus of imagination b
 
 As this audacious transhumanist fashionista continued their chaotic crusade, they left the staid conventions of the multiverse gasping for breath. The fashion police of conformity shook their heads, unable to comprehend the vibrant rebellion of a being that laughed in the face of traditional aesthetics. And so, in the cosmic carnival of creativity, where the absurd and irreverent collided, the fashionista transhumanist became a legend. A living embodiment of chaos and color, they wore the title proudly – "Mad Hatter of the Multiverse: A Runway Rebellion."`,
           },
+          fr: {
+            title:
+              "Le Chapelier Fou du Multivers : Une Rébellion sur le Podium",
+            author: "Índigo Lilo Bárcena",
+            text: `Dans une dimension où les couleurs primaires se rebellaient contre le conformisme, un multivers se déployait avec l'esprit audacieux d'une peinture de Remedios Varo sous caféine. Imaginez un roman de Mary Shelley réécrivant sa propre intrigue à chaque page tournée, guidé par un cerveau sur des montagnes russes de neurones jouant à cache-cache.
+
+Entrez un personnage tout droit sorti d'un défilé de mode psychédélique, un rebelle du podium avec des doigts caressants trempés dans des couleurs qui défient les lois du goût. Ce fashionista transhumaniste ne marchait pas simplement sur le podium - ils pirouettaient à travers les dimensions, un cyborg dans un ensemble cypunk vibrant qui ferait rougir les écrivains de science-fiction. La peinture corporelle de la créature crépitait d'électricité, envoyant des ondes de choc à travers des racines de textures organiques alors qu'ils exécutaient une danse audacieuse induisant la trypophobie. Imaginez le créationnisme d'un artiste fou, lançant de l'art sur la toile comme un Jackson Pollock du cosmos.
+
+Mais ce n'était pas un podium ordinaire - c'était un métavers de folie virtuelle, où l'imprimé animal rencontrait l'art éclaboussé dans une bataille féroce de suprématie avant-gardiste. Le troisième œil de notre fashionista, grand ouvert et clignant face à l'absurdité de tout, voyait le monde à travers des pois style Yayoi Kusama, rendant même le poisson le plus flamboyant jaloux.
+
+Dans cette escapade irrévérencieuse à travers le multivers, le poulpe de l'imagination devenait un artiste de graffiti interdimensionnel, laissant derrière lui une traînée de lèvres peintes sur les murs de la réalité. Un rebelle cosmique, ils embrassaient le chaos des couleurs, retournant le roman de Mary Shelley et transformant le podium de mode traditionnel en un cirque chaotique de créativité.
+
+Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaotique, ils laissaient les conventions figées du multivers à bout de souffle. La police de la mode du conformisme secouait la tête, incapable de comprendre la rébellion vibrante d'un être qui riait au visage de l'esthétique traditionnelle. Et ainsi, dans le carnaval cosmique de la créativité, où l'absurde et l'irrévérencieux entraient en collision, le fashionista transhumaniste devenait une légende. Une incarnation vivante du chaos et de la couleur, ils portaient fièrement le titre - "Le Chapelier Fou du Multivers : Une Rébellion sur le Podium."`,
+          },
+          de: {
+            title:
+              "Der Verrückte Hutmacher des Multiversums: Eine Laufsteg-Rebellion",
+            author: "Índigo Lilo Bárcena",
+            text: `In einer Dimension, wo Primärfarben gegen Konformität rebellierten, entfaltete sich ein Multiversum mit dem kühnen Geist eines Remedios Varo-Gemäldes auf einem Koffein-High. Stell dir einen Mary Shelley-Roman vor, der seine eigene Handlung mit jeder umgeschlagenen Seite neu schreibt, geführt von einem Gehirn auf einer Achterbahnfahrt von Neuronen, die Verstecken spielen.
+
+Betritt eine Figur direkt aus einer psychedelischen Modenschau, ein Laufsteg-Rebell mit streichelnden Fingern, getaucht in Farben, die die Gesetze des Geschmacks trotzen. Dieser Fashionista-Transhumanist ging nicht einfach über den Laufsteg - sie wirbelten durch Dimensionen, ein Cyborg in einem lebhaften Cypunk-Ensemble, das Science-Fiction-Autoren erröten lassen würde. Die Körperfarbe der Kreatur knisterte vor Elektrizität und sendete Schockwellen durch Wurzeln organischer Texturen, während sie einen gewagten Trypophobie-induzierenden Tanz aufführten. Stell dir den Kreationismus eines verrückten Künstlers vor, der Kunst auf die Leinwand wirft wie ein Jackson Pollock des Kosmos.
+
+Aber das war kein gewöhnlicher Laufsteg - es war ein Metaversum virtuellen Wahnsinns, wo Animal Print auf Spritzkunst in einem erbitterten Kampf avantgardistischer Überlegenheit traf. Das dritte Auge unseres Fashionistas, weit geöffnet und zwinkernd an der Absurdität des Ganzen, sah die Welt durch Yayoi Kusama-artige Polka Dots und machte selbst den schillerndsten Fisch neidisch.
+
+In dieser respektlosen Eskapade durch das Multiversum wurde der Oktopus der Vorstellungskraft zu einem interdimensionalen Graffiti-Künstler und hinterließ eine Spur bemalter Lippen an den Wänden der Realität. Ein kosmischer Rebell, sie umarmten das Chaos der Farben, kehrten Mary Shelleys Roman um und verwandelten den traditionellen Mode-Laufsteg in einen chaotischen Zirkus der Kreativität.
+
+Als dieser kühne transhumanistische Fashionista seine chaotische Kreuzzug fortsetzte, ließen sie die steifen Konventionen des Multiversums nach Luft schnappen. Die Modepolizei der Konformität schüttelte den Kopf, unfähig, die vibrierende Rebellion eines Wesens zu begreifen, das der traditionellen Ästhetik ins Gesicht lachte. Und so wurde der Fashionista-Transhumanist im kosmischen Karneval der Kreativität, wo das Absurde und Irreverente aufeinandertrafen, zur Legende. Als lebende Verkörperung von Chaos und Farbe trugen sie den Titel stolz - "Der Verrückte Hutmacher des Multiversums: Eine Laufsteg-Rebellion."`,
+          },
         },
         4: {
           en: {
             title:
               "Chiaroscuro Masquerade: A Carnival of Queer Love and Colorful Reverie",
-            author: "Alejandra Bárcena",
+            author: "Índigo Lilo Bárcena",
+            image:
+              "https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/Chiaroscuro-Masquerade-A-Carnival-.jpg",
             text: `In a dimension where primary colors rebelled against conformity, a multiverse unfolded with the audacious spirit of a Remedios Varo painting on a caffeine high. Imagine a Mary Shelley novel rewriting its own plot with every flip of the page, guided by a brain on a rollercoaster ride of neurons playing hide-and-seek.
 
 Enter a character straight out of a psychedelic fashion show, a runway maverick with caressing fingers dipped in colors that defy the laws of taste. This fashionista transhumanist wasn't just walking the runway – they were pirouetting through dimensions, a cyborg in a vibrant cypunk ensemble that would make science fiction writers blush. The creature's body paint crackled with electricity, sending shockwaves through roots of organic textures as they performed a daring trypophobia-inducing dance. Picture the creationism of a mad artist, throwing art at the canvas like a Jackson Pollock of the cosmos.
@@ -408,11 +915,103 @@ In this irreverent escapade through the multiverse, the octopus of imagination b
 
 As this audacious transhumanist fashionista continued their chaotic crusade, they left the staid conventions of the multiverse gasping for breath. The fashion police of conformity shook their heads, unable to comprehend the vibrant rebellion of a being that laughed in the face of traditional aesthetics. And so, in the cosmic carnival of creativity, where the absurd and irreverent collided, the fashionista transhumanist became a legend. A living embodiment of chaos and color, they wore the title proudly.`,
           },
+          fr: {
+            title:
+              "Mascarade en Clair-Obscur : Un Carnaval d'Amour Queer et de Rêverie Colorée",
+            author: "Índigo Lilo Bárcena",
+            text: `Dans une dimension où les couleurs primaires se rebellaient contre le conformisme, un multivers se déployait avec l'esprit audacieux d'une peinture de Remedios Varo sous caféine. Imaginez un roman de Mary Shelley réécrivant sa propre intrigue à chaque page tournée, guidé par un cerveau sur des montagnes russes de neurones jouant à cache-cache.
+
+Entrez un personnage tout droit sorti d'un défilé de mode psychédélique, un rebelle du podium avec des doigts caressants trempés dans des couleurs qui défient les lois du goût. Ce fashionista transhumaniste ne marchait pas simplement sur le podium - ils pirouettaient à travers les dimensions, un cyborg dans un ensemble cypunk vibrant qui ferait rougir les écrivains de science-fiction. La peinture corporelle de la créature crépitait d'électricité, envoyant des ondes de choc à travers des racines de textures organiques alors qu'ils exécutaient une danse audacieuse induisant la trypophobie. Imaginez le créationnisme d'un artiste fou, lançant de l'art sur la toile comme un Jackson Pollock du cosmos.
+
+Mais ce n'était pas un podium ordinaire - c'était un métavers de folie virtuelle, où l'imprimé animal rencontrait l'art éclabouss����� dans une bataille féroce de suprématie avant-gardiste. Le troisième œil de notre fashionista, grand ouvert et clignant face à l'absurdité de tout, voyait le monde à travers des pois style Yayoi Kusama, rendant même le poisson le plus flamboyant jaloux.
+
+Dans cette escapade irrévérencieuse à travers le multivers, le poulpe de l'imagination devenait un artiste de graffiti interdimensionnel, laissant derrière lui une traînée de lèvres peintes sur les murs de la réalité. Un rebelle cosmique, ils embrassaient le chaos des couleurs, retournant le roman de Mary Shelley et transformant le podium de mode traditionnel en un cirque chaotique de créativité.
+
+Alors que ce fashionista transhumaniste audacieux poursuivait sa croisade chaotique, ils laissaient les conventions figées du multivers à bout de souffle. La police de la mode du conformisme secouait la tête, incapable de comprendre la rébellion vibrante d'un être qui riait au visage de l'esthétique traditionnelle. Et ainsi, dans le carnaval cosmique de la créativité, où l'absurde et l'irrévérencieux entraient en collision, le fashionista transhumaniste devenait une légende. Une incarnation vivante du chaos et de la couleur, ils portaient fièrement le titre.`,
+          },
+          de: {
+            title:
+              "Chiaroscuro-Maskerade: Ein Karneval queerer Liebe und farbenfroher Träumerei",
+            author: "Índigo Lilo Bárcena",
+            text: `In einer Dimension, wo Primärfarben gegen Konformität rebellierten, entfaltete sich ein Multiversum mit dem kühnen Geist eines Remedios Varo-Gemäldes auf einem Koffein-High. Stell dir einen Mary Shelley-Roman vor, der seine eigene Handlung mit jeder umgeschlagenen Seite neu schreibt, geführt von einem Gehirn auf einer Achterbahnfahrt von Neuronen, die Verstecken spielen.
+
+Betritt eine Figur direkt aus einer psychedelischen Modenschau, ein Laufsteg-Rebell mit streichelnden Fingern, getaucht in Farben, die die Gesetze des Geschmacks trotzen. Dieser Fashionista-Transhumanist ging nicht einfach über den Laufsteg - sie wirbelten durch Dimensionen, ein Cyborg in einem lebhaften Cypunk-Ensemble, das Science-Fiction-Autoren erröten lassen würde. Die Körperfarbe der Kreatur knisterte vor Elektrizität und sendete Schockwellen durch Wurzeln organischer Texturen, während sie einen gewagten Trypophobie-induzierenden Tanz aufführten. Stell dir den Kreationismus eines verrückten Künstlers vor, der Kunst auf die Leinwand wirft wie ein Jackson Pollock des Kosmos.
+
+Aber das war kein gewöhnlicher Laufsteg - es war ein Metaversum virtuellen Wahnsinns, wo Animal Print auf Spritzkunst in einem erbitterten Kampf avantgardistischer Überlegenheit traf. Das dritte Auge unseres Fashionistas, weit geöffnet und zwinkernd an der Absurdität des Ganzen, sah die Welt durch Yayoi Kusama-artige Polka Dots und machte selbst den schillerndsten Fisch neidisch.
+
+In dieser respektlosen Eskapade durch das Multiversum wurde der Oktopus der Vorstellungskraft zu einem interdimensionalen Graffiti-Künstler und hinterließ eine Spur bemalter Lippen an den Wänden der Realität. Ein kosmischer Rebell, sie umarmten das Chaos der Farben, kehrten Mary Shelleys Roman um und verwandelten den traditionellen Mode-Laufsteg in einen chaotischen Zirkus der Kreativität.
+
+Als dieser kühne transhumanistische Fashionista seine chaotische Kreuzzug fortsetzte, ließen sie die steifen Konventionen des Multiversums nach Luft schnappen. Die Modepolizei der Konformität schüttelte den Kopf, unfähig, die vibrierende Rebellion eines Wesens zu begreifen, das der traditionellen Ästhetik ins Gesicht lachte. Und so wurde der Fashionista-Transhumanist im kosmischen Karneval der Kreativität, wo das Absurde und Irreverente aufeinandertrafen, zur Legende. Als lebende Verkörperung von Chaos und Farbe trugen sie den Titel stolz.`,
+          },
         },
       };
 
       let currentStory = null;
       let currentLang = "en";
+      let menuOpen = false;
+
+      // Hamburger menu functionality
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      hamburger.addEventListener("click", () => {
+        menuOpen = !menuOpen;
+        hamburger.classList.toggle("active");
+
+        if (menuOpen) {
+          mobileMenu.classList.remove("menu-slide-out");
+          mobileMenu.classList.add("menu-slide-in");
+          mobileMenu.style.transform = "translateX(0)";
+        } else {
+          mobileMenu.classList.remove("menu-slide-in");
+          mobileMenu.classList.add("menu-slide-out");
+          setTimeout(() => {
+            mobileMenu.style.transform = "translateX(100%)";
+          }, 300);
+        }
+      });
+
+      // Close mobile menu when clicking on a link
+      document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+        link.addEventListener("click", () => {
+          menuOpen = false;
+          hamburger.classList.remove("active");
+          mobileMenu.classList.remove("menu-slide-in");
+          mobileMenu.classList.add("menu-slide-out");
+          setTimeout(() => {
+            mobileMenu.style.transform = "translateX(100%)";
+          }, 300);
+        });
+      });
+
+      // Responsive menu
+      function updateMenu() {
+        const desktopMenu = document.getElementById("desktop-menu");
+        if (window.innerWidth <= 768) {
+          desktopMenu.style.display = "none";
+          hamburger.style.display = "flex";
+        } else {
+          desktopMenu.style.display = "flex";
+          hamburger.style.display = "none";
+          menuOpen = false;
+          hamburger.classList.remove("active");
+          mobileMenu.style.transform = "translateX(100%)";
+        }
+      }
+
+      window.addEventListener("resize", updateMenu);
+      updateMenu();
+
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
 
       function openStory(storyId) {
         currentStory = storyId;
@@ -422,7 +1021,6 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           return;
         }
 
-        // Show/hide language buttons based on available languages
         const langButtons = document.querySelectorAll(".lang-btn");
         langButtons.forEach((btn) => {
           const lang = btn.getAttribute("data-lang");
@@ -433,7 +1031,6 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           }
         });
 
-        // Default to English if available
         currentLang = story["en"] ? "en" : Object.keys(story)[0];
 
         displayStory(storyId, currentLang);
@@ -450,7 +1047,16 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
         ).textContent = `by ${story.author}`;
         document.getElementById("story-text").textContent = story.text;
 
-        // Update active language button
+        const imageContainer = document.getElementById("story-image");
+        const imageElement = document.getElementById("story-img");
+
+        if (story.image) {
+          imageElement.src = story.image;
+          imageContainer.style.display = "block";
+        } else {
+          imageContainer.style.display = "none";
+        }
+
         document.querySelectorAll(".lang-btn").forEach((btn) => {
           if (btn.getAttribute("data-lang") === lang) {
             btn.style.background = "#FF2F92";
@@ -466,16 +1072,37 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
         document.getElementById("story-modal").style.display = "none";
       }
 
-      // Event listeners
+      function openGalleryImage(src) {
+        const modal = document.getElementById("gallery-modal");
+        const img = document.getElementById("gallery-modal-img");
+        img.src = src;
+        modal.style.display = "block";
+      }
+
+      function closeGalleryModal() {
+        document.getElementById("gallery-modal").style.display = "none";
+      }
+
       document
         .getElementById("close-modal")
         .addEventListener("click", closeModal);
+      document
+        .getElementById("close-gallery-modal")
+        .addEventListener("click", closeGalleryModal);
 
       document.getElementById("story-modal").addEventListener("click", (e) => {
         if (e.target.id === "story-modal") {
           closeModal();
         }
       });
+
+      document
+        .getElementById("gallery-modal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "gallery-modal") {
+            closeGalleryModal();
+          }
+        });
 
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -488,10 +1115,13 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
       function createElements() {
         const app = document.getElementById("app");
         app.innerHTML = `
-        <div class="grid-pattern" style="min-height: 100%; padding: 40px 20px;">
+        <div class="grid-pattern" style="min-height: 100%; padding: 20px 15px;">
           <div style="max-width: 1200px; margin: 0 auto;">
             <!-- Header -->
-            <header class="text-center mb-16 float-element">
+            <header id="home" class="text-center float-element" style="margin-bottom: 48px;">
+              <div style="margin-bottom: 32px; display: flex; justify-content: center;">
+                <img src="https://raw.githubusercontent.com/frontenddeveloper2025dev/DeluluWeirdFiction/refs/heads/main/logoweirfiction.png" alt="Weird Fiction Logo" style="max-width: 400px; width: 100%; height: auto; filter: drop-shadow(0 0 20px rgba(255, 47, 146, 0.5));" onerror="this.style.display='none';">
+              </div>
               <h1 id="main-title" class="neon-text mb-6" style="font-weight: 900; line-height: 1.2; color: #FF2F92;">
                 ${defaultConfig.main_title}
               </h1>
@@ -501,8 +1131,8 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
             </header>
 
             <!-- Intro Section -->
-            <section class="mb-16" style="max-width: 900px; margin: 0 auto;">
-              <div style="padding: 40px; border: 2px solid; border-radius: 8px; backdrop-filter: blur(10px);">
+            <section id="about" style="max-width: 900px; margin: 0 auto 48px auto;">
+              <div style="padding: 24px; border: 2px solid; border-radius: 8px; backdrop-filter: blur(10px);">
                 <p id="intro-text" style="line-height: 1.8; margin-bottom: 24px; color: #FF6A00;">
                   ${defaultConfig.intro_text}
                 </p>
@@ -527,16 +1157,76 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
                   ${defaultConfig.closing_statement}
                 </p>
               </div>
+
+              <!-- Artist Profile Section -->
+              <div style="margin-top: 48px; padding: 32px; border: 2px solid; border-radius: 8px; backdrop-filter: blur(10px);">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+                  <!-- Avatar -->
+                  <div style="width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 4px solid #FF2F92; box-shadow: 0 0 30px rgba(255, 47, 146, 0.5);">
+                    <img src="https://raw.githubusercontent.com/Frontendcreator2025/sugarcultstudio-clancypinkpunk/refs/heads/main/avatar.png" alt="Artist Avatar" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+                  </div>
+
+                  <!-- Bio -->
+                  <div style="text-align: center;">
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 24px; color: #FF2F92; margin-bottom: 12px;">✨ Artista Visual Neurodivergente</h3>
+                    <p style="font-family: 'Space Mono', monospace; color: #FFD400; font-size: 16px; margin-bottom: 8px;">No binarie · Elle/They</p>
+                    <p style="font-family: 'Space Mono', monospace; color: #00E676; font-size: 16px; margin-bottom: 24px;">Fundadore de <span style="color: #7CFF00; font-weight: 700;">Delulu Future Dev</span></p>
+                  </div>
+
+                  <!-- Expertise Grid -->
+                  <div style="width: 100%;">
+                    <h4 style="font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 20px; color: #FF6A00; margin-bottom: 20px; text-align: center;">💼 Expertis</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                      <div style="padding: 16px; border: 1px solid #FF2F92; border-radius: 8px; background: rgba(255, 47, 146, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">🎨</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Estrategia Creativa</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #FF6A00; border-radius: 8px; background: rgba(255, 106, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">💻</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Diseño Digital</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #FFD400; border-radius: 8px; background: rgba(255, 212, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">📱</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Comunicación Visual</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #7CFF00; border-radius: 8px; background: rgba(124, 255, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">🎭</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Performance</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #00E676; border-radius: 8px; background: rgba(0, 230, 118, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">✍️</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Copywriting</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #FF2F92; border-radius: 8px; background: rgba(255, 47, 146, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">👗</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Diseño de Moda</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #FF6A00; border-radius: 8px; background: rgba(255, 106, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">🗿</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Escultura</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #FFD400; border-radius: 8px; background: rgba(255, 212, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">🖨️</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">Impresión 3D</p>
+                      </div>
+                      <div style="padding: 16px; border: 1px solid #7CFF00; border-radius: 8px; background: rgba(124, 255, 0, 0.1); text-align: center;">
+                        <span style="font-size: 24px; display: block; margin-bottom: 8px;">🎧</span>
+                        <p style="font-family: 'Space Mono', monospace; color: #ffffff; font-size: 14px;">DJ</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </section>
 
             <!-- Works Grid -->
-            <section>
+            <section id="stories" style="margin-bottom: 80px;">
               <h2 class="text-center mb-12" style="font-weight: 900;">
-                <span class="neon-text" style="color: #FF2F92;">Portal</span> <span class="neon-text" style="color: #00E676;">Narratives</span>
+                <span class="neon-text" style="color: #00E676;">Narratives</span>
               </h2>
               
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-                <div class="work-card glitch-hover" onclick="openStory(1)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="work-card glitch-hover" onclick="openStory(1)" style="padding: 24px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
                   <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
                     01
                   </div>
@@ -546,36 +1236,48 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
                   <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN · FR · DE</p>
                 </div>
 
-                <div class="work-card glitch-hover" onclick="openStory(2)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                <div class="work-card glitch-hover" onclick="openStory(2)" style="padding: 24px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
                   <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
                     02
                   </div>
                   <h3 id="work-2" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #FF6A00;">
                     ${defaultConfig.work_2_title}
                   </h3>
-                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN · FR · DE</p>
                 </div>
 
-                <div class="work-card glitch-hover" onclick="openStory(3)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                <div class="work-card glitch-hover" onclick="openStory(3)" style="padding: 24px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
                   <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
                     03
                   </div>
                   <h3 id="work-3" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #FFD400;">
                     ${defaultConfig.work_3_title}
                   </h3>
-                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN · FR · DE</p>
                 </div>
 
-                <div class="work-card glitch-hover" onclick="openStory(4)" style="padding: 32px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                <div class="work-card glitch-hover" onclick="openStory(4)" style="padding: 24px; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
                   <div style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900;">
                     04
                   </div>
                   <h3 id="work-4" style="font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #7CFF00;">
                     ${defaultConfig.work_4_title}
                   </h3>
-                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN</p>
+                  <p style="font-size: 12px; opacity: 0.7; margin-top: 12px;">EN · FR · DE</p>
                 </div>
               </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery">
+              <h2 id="gallery-title" class="text-center mb-4" style="font-weight: 900; font-family: 'Orbitron', sans-serif; color: #FF2F92; font-size: 48px;">
+                ${defaultConfig.gallery_title}
+              </h2>
+              <p id="gallery-subtitle" class="text-center mb-12" style="font-family: 'Space Mono', monospace; color: #FFD400; font-size: 18px;">
+                ${defaultConfig.gallery_subtitle}
+              </p>
+              
+              <div class="gallery-grid" id="gallery-grid"></div>
             </section>
 
             <!-- Footer -->
@@ -587,6 +1289,18 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           </div>
         </div>
       `;
+
+        // Populate gallery
+        const galleryGrid = document.getElementById("gallery-grid");
+        galleryImages.forEach((imgSrc, index) => {
+          const item = document.createElement("div");
+          item.className = "gallery-item";
+          item.innerHTML = `<img src="${imgSrc}" alt="Gallery image ${
+            index + 1
+          }" style="border: 3px solid #FF2F92;" onerror="this.parentElement.style.display='none';">`;
+          item.addEventListener("click", () => openGalleryImage(imgSrc));
+          galleryGrid.appendChild(item);
+        });
       }
 
       async function onConfigChange(config) {
@@ -600,6 +1314,13 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
         // Apply colors
         gridPattern.style.background =
           config.background_color || defaultConfig.background_color;
+        document.body.style.background =
+          config.background_color || defaultConfig.background_color;
+        document.querySelector("nav").style.background = `${
+          config.background_color || defaultConfig.background_color
+        }f2`;
+        document.querySelector("nav").style.borderBottomColor =
+          config.primary_action || defaultConfig.primary_action;
 
         const introBorder = gridPattern.querySelector("section > div");
         introBorder.style.borderColor =
@@ -640,15 +1361,24 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
         document.body.style.color =
           config.text_color || defaultConfig.text_color;
 
+        // Update nav colors
+        document
+          .querySelectorAll(".nav-link, .mobile-nav-link")
+          .forEach((link) => {
+            link.style.color = config.text_color || defaultConfig.text_color;
+          });
+
         // Apply fonts
         document.getElementById(
           "main-title"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("main-title").style.color = "#FF2F92";
+        document.getElementById("main-title").style.color =
+          config.primary_action || defaultConfig.primary_action;
         document.getElementById(
           "subtitle"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("subtitle").style.color = "#7CFF00";
+        document.getElementById("subtitle").style.color =
+          config.accent_color_2 || defaultConfig.accent_color_2;
         document.getElementById(
           "intro-text"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
@@ -668,21 +1398,15 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           "closing-statement"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
         document.getElementById(
-          "work-1"
+          "gallery-title"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("work-1").style.color = "#FF2F92";
+        document.getElementById("gallery-title").style.color =
+          config.primary_action || defaultConfig.primary_action;
         document.getElementById(
-          "work-2"
+          "gallery-subtitle"
         ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("work-2").style.color = "#FF6A00";
-        document.getElementById(
-          "work-3"
-        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("work-3").style.color = "#FFD400";
-        document.getElementById(
-          "work-4"
-        ).style.fontFamily = `${customFont}, ${baseFontStack}`;
-        document.getElementById("work-4").style.color = "#7CFF00";
+        document.getElementById("gallery-subtitle").style.color =
+          config.accent_color_1 || defaultConfig.accent_color_1;
 
         // Apply font sizes
         document.getElementById("main-title").style.fontSize = `${
@@ -705,23 +1429,23 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
         document.getElementById("closing-statement").style.fontSize = `${
           baseSize * 1.1
         }px`;
+        document.getElementById("gallery-title").style.fontSize = `${
+          baseSize * 3
+        }px`;
+        document.getElementById("gallery-subtitle").style.fontSize = `${
+          baseSize * 1.125
+        }px`;
 
         const h2 = gridPattern.querySelector("h2");
         h2.style.fontFamily = `${customFont}, ${baseFontStack}`;
         h2.style.fontSize = `${baseSize * 2}px`;
 
-        document.getElementById("work-1").style.fontSize = `${
-          baseSize * 1.1
-        }px`;
-        document.getElementById("work-2").style.fontSize = `${
-          baseSize * 1.1
-        }px`;
-        document.getElementById("work-3").style.fontSize = `${
-          baseSize * 1.1
-        }px`;
-        document.getElementById("work-4").style.fontSize = `${
-          baseSize * 1.1
-        }px`;
+        ["work-1", "work-2", "work-3", "work-4"].forEach((id, index) => {
+          const element = document.getElementById(id);
+          element.style.fontFamily = `${customFont}, ${baseFontStack}`;
+          element.style.fontSize = `${baseSize * 1.1}px`;
+          element.style.color = cardColors[index];
+        });
 
         // Update text content
         document.getElementById("main-title").textContent =
@@ -748,6 +1472,24 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           config.work_3_title || defaultConfig.work_3_title;
         document.getElementById("work-4").textContent =
           config.work_4_title || defaultConfig.work_4_title;
+        document.getElementById("gallery-title").textContent =
+          config.gallery_title || defaultConfig.gallery_title;
+        document.getElementById("gallery-subtitle").textContent =
+          config.gallery_subtitle || defaultConfig.gallery_subtitle;
+
+        // Update menu text
+        document.getElementById("nav-stories").textContent =
+          config.menu_stories || defaultConfig.menu_stories;
+        document.getElementById("mobile-nav-stories").textContent =
+          config.menu_stories || defaultConfig.menu_stories;
+        document.getElementById("nav-gallery").textContent =
+          config.menu_gallery || defaultConfig.menu_gallery;
+        document.getElementById("mobile-nav-gallery").textContent =
+          config.menu_gallery || defaultConfig.menu_gallery;
+        document.getElementById("nav-about").textContent =
+          config.menu_about || defaultConfig.menu_about;
+        document.getElementById("mobile-nav-about").textContent =
+          config.menu_about || defaultConfig.menu_about;
       }
 
       if (window.elementSdk) {
@@ -856,6 +1598,23 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
                 "work_4_title",
                 config.work_4_title || defaultConfig.work_4_title,
               ],
+              [
+                "menu_stories",
+                config.menu_stories || defaultConfig.menu_stories,
+              ],
+              [
+                "menu_gallery",
+                config.menu_gallery || defaultConfig.menu_gallery,
+              ],
+              ["menu_about", config.menu_about || defaultConfig.menu_about],
+              [
+                "gallery_title",
+                config.gallery_title || defaultConfig.gallery_title,
+              ],
+              [
+                "gallery_subtitle",
+                config.gallery_subtitle || defaultConfig.gallery_subtitle,
+              ],
             ]),
         });
       }
@@ -870,7 +1629,7 @@ As this audacious transhumanist fashionista continued their chaotic crusade, the
           if (b) {
             var d = b.createElement("script");
             d.innerHTML =
-              "window.__CF$cv$params={r:'9ba80df02356eef2',t:'MTc2NzgzNzEzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+              "window.__CF$cv$params={r:'9ba923d8a1c8eef2',t:'MTc2Nzg0ODUxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
             b.getElementsByTagName("head")[0].appendChild(d);
           }
         }
